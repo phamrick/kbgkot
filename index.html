@@ -131,13 +131,15 @@
 			
 			objectLayer.add(kimgSendDecks);
 			
-			kimgSendDecks.on('click touch', function() {
+			var fEvent = function() {
 		      var key = fGetRandomImageKey();
 			  var nodeIDnew = fInstantiateCard(key, '');
 			  socket.emit('instantiateCard', { nodeID: nodeIDnew,
 												cardKey: key,  }
 			  );
-			});
+			}
+			
+			kimgSendDecks.on('click touchstart', fEvent);
 			
 			objectLayer.draw();
 			
