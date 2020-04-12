@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+  <head>
+    <title>KOT Socket.io</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<script src="https://unpkg.com/konva@4.2.2/konva.min.js"></script>
+    <script>
+		
+	  var objectLayer; 
+	  var socket = io();
+		
+	  function fRandomString() {
+		var returnVal = Math.random().toString(36).substring(2, 15);
+		return returnVal;
+	  }
+		
+      var sources = {
+			Card01: 'Card01.png',Card02: 'Card02.png',Card03: 'Card03.png',Card04: 'Card04.png',Card05: 'Card05.png',Card06: 'Card06.png',Card07: 'Card07.png',Card08: 'Card08.png',Card09: 'Card09.png',Card10: 'Card10.png',
+			Card11: 'Card11.png',Card12: 'Card12.png',Card13: 'Card13.png',Card14: 'Card14.png',Card15: 'Card15.png',Card16: 'Card16.png',Card17: 'Card17.png',Card18: 'Card18.png',Card19: 'Card19.png',Card20: 'Card20.png',
+			Card21: 'Card21.png',Card22: 'Card22.png',Card23: 'Card23.png',Card24: 'Card24.png',Card25: 'Card25.png',Card26: 'Card26.png',Card27: 'Card27.png',Card28: 'Card28.png',Card29: 'Card29.png',Card30: 'Card30.png',
+			Card31: 'Card31.png',Card32: 'Card32.png',Card33: 'Card33.png',Card34: 'Card34.png',Card35: 'Card35.png',Card36: 'Card36.png',Card37: 'Card37.png',Card38: 'Card38.png',Card39: 'Card39.png',Card40: 'Card40.png',
+			Card41: 'Card41.png',Card42: 'Card42.png',Card43: 'Card43.png',Card44: 'Card44.png',Card45: 'Card45.png',Card46: 'Card46.png',Card47: 'Card47.png',Card48: 'Card48.png',Card49: 'Card49.png',Card50: 'Card50.png',
+			Card51: 'Card51.png',Card52: 'Card52.png',Card53: 'Card53.png',Card54: 'Card54.png',Card55: 'Card55.png',Card56: 'Card56.png',Card57: 'Card57.png',Card58: 'Card58.png',Card59: 'Card59.png',Card60: 'Card60.png',
+			Card61: 'Card61.png',Card62: 'Card62.png',Card63: 'Card63.png',Card64: 'Card64.png',
+			ButtonSendDecks: 'ButtonSendDecks.png'
+	  };
+	
+	  function fGetRandomImageKey() {
+
+        var keys = Object.keys(sources);
+        var randomKey = keys[Math.floor(Math.random() * keys.length)];
+		return randomKey;
+      }
+	  
+	  function fUpdateKnodePos(iNodeID, iX, iY) {
+		
+		var oNode = objectLayer.getChildren(function(node){
+		   return node.id() === iNodeID;
+		}).toArray()[0];
+		
+		oNode.x(iX);
+		oNode.y(iY);
+		objectLayer.draw();
+	  }
+
+      function fInstantiateCard(iImageKey, iNodeID) {
+				
+	    if (iNodeID === '')
+		{
+			iNodeID = fRandomString();
+		}
+		
+        var cardKimg = new Konva.Image({
+            image: images[iImageKey],
+            x: 50,
+            y: 50,
+            draggable: true,
+			id: iNodeID
+        });
+		
+		cardKimg.on('dragmove', function(e) {
+		  var oNode = e.target;
+		  socket.emit('dragKnode', { nodeID: oNode.id(),
+											x: oNode.x(),
+											y: oNode.y()}
+		  );
+		});
+			
+        objectLayer.add(cardKimg);
+        objectLayer.draw();
+		
+		return cardKimg.id();
+      }
+	  
+      socket.on('instantiateCard', function(data){
+	  
+	  
+		var nodeID = data.nodeID;
+		var cardKey = data.cardKey;
+
+		
+		fInstantiateCard(cardKey, nodeID);
+        
+      });
+	  
+      socket.on('dragKnode', function(data){
+	  
+		var nodeID = data.nodeID;
+		var x = data.x;
+		var y = data.y;
+		
+	    fUpdateKnodePos(nodeID, x, y);
+      });
+	  
+      function initStage() {
+
+        var stage = new Konva.Stage({
+          container: 'container',
+          width: 600,
+          height: 400
+        });
+		
+        //var background = new Konva.Layer();
+        objectLayer = new Konva.Layer();
+		
+		var imgSendDecks = new Image();
+		imgSendDecks.src = 'ButtonSendDecks.png';
+		imgSendDecks.addEventListener("load", function() {
+		
+			var kimgSendDecks = new Konva.Image({
+			  image: imgSendDecks,
+				x: 200,
+				y: 340,
+			  draggable: false,
+			});
+			
+			objectLayer.add(kimgSendDecks);
+			
+			kimgSendDecks.on('click', function() {
+		      var key = fGetRandomImageKey();
+			  var nodeIDnew = fInstantiateCard(key, '');
+			  socket.emit('instantiateCard', { nodeID: nodeIDnew,
+												cardKey: key,  }
+			  );
+			});
+			
+			objectLayer.draw();
+			
+		}, false);
+		
+        //stage.add(background);
+		stage.add(objectLayer);
+		
+	  }
+	  
+
+
+	  var images = {};
+      
+      var loadedImages = 0;
+      var numImages = 0;
+      for (var src in sources) {
+        numImages++;
+      }
+
+      for (var src in sources) {
+        images[src] = new Image();
+        images[src].onload = function() {
+          if (++loadedImages >= numImages) {
+            initStage(images);
+          }
+        };
+
+		images[src].src = sources[src];
+      }
+	  
+    </script>
+  </body>
+</html>
