@@ -1,4 +1,6 @@
 var dictDieSupGifs = {}; // create an empty array
+var dictDivGifs = {}; 
+var dictImgRerolls = {}; 
 
 var dieXpos = window.innerWidth/2 - (180*6/2);
 
@@ -33,23 +35,79 @@ function CreateDieGif(iID)
 		// }
 	// });
 
-	divGif.addEventListener('click', function(e) {
-		
-		var delay = 1000;
-		for(var key in dictDieSupGifs)
+	var imgDie = divGif.childNodes[0];
+	
+	imgDie.addEventListener('click', function(e) {
+		var imgDie = e.target;
+		var imgReroll = imgDie.parentNode.parentNode.childNodes[1];
+
+		if (imgReroll.style.visibility === 'hidden')
 		{
-			rollDie(key, delay);
-			delay = delay + 250;
+			imgReroll.style.visibility = 'visible';
+		} else {
+			imgReroll.style.visibility = 'hidden';
 		}
-		
 	});
+	
+	var imgReroll = divGif.childNodes[1];
+	
+	imgReroll.addEventListener('click', function(e) {
+		
+		//var delay = 1000;
+		//for(var key in dictDieSupGifs)
+		//{
+		//	rollDie(key, delay);
+		//	delay = delay + 250;
+		//}
+		
+		//var imgReroll = divGif.childNodes[1];
+		
+		var imgReroll = e.target;
+
+		if (imgReroll.style.visibility === 'hidden')
+		{
+			imgReroll.style.visibility = 'visible';
+		} else {
+				
+			var rollTheseIDs = {};
+			for(var key in dictImgRerolls)
+			{
+				var imgReroll = dictImgRerolls[key];
+				if(imgReroll.style.visibility === 'visible')
+				{
+					imgReroll.style.visibility = 'hidden';
+					rollTheseIDs[key] = key;
+				}
+			}
+			
+			var allOrSome = rollTheseIDs;
+			if (Object.keys(allOrSome).length === 0)
+			{
+				allOrSome = dictDieSupGifs;
+			}
+
+			var delay = 1000;
+			for(var key in rollTheseIDs)
+			{			
+				rollDie(key, delay);
+				delay = delay + 250;
+			}
+			
+		}
+	});
+	
+	// imgReroll.addEventListener('dblclick', function(e) {
+		
+
+	// });
 }
 
 function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 {
 	var divNew = document.createElement('div');
 	divNew.setAttribute('id', iID);
-	//divNew.setAttribute('opacity', '0');
+	divNew.style.textAlign  = 'center';
+	divNew.style.margin  = 'auto';
 	
 	//divNew.style.cssText = 'position:absolute;width:100%;height:100%;opacity:0.3;z-index:100;background:#000';
 	document.body.appendChild(divNew);
@@ -58,9 +116,22 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	imgNew.src = iSrc;
 	imgNew.setAttribute('rel:animated_src', iSrc);
 	imgNew.setAttribute('rel:auto_play', '0');
-	//imgNew.setAttribute('opacity', '0');
+	// imgNew.style.zIndex = 1;
+	// imgNew.style.margin = '0 auto';
+	// imgNew.style.position = 'absolute';
 	
 	divNew.appendChild(imgNew);
+	
+    var imgReroll = new Image();
+	imgReroll.style.visibility = 'visible';
+	imgReroll.src = 'reroll_die_30.png';
+	// imgReroll.style.margin = '0 auto';
+	// imgReroll.style.position = 'absolute';
+	// imgReroll.style.zIndex = 2;
+	
+	dictImgRerolls[iID] = imgReroll;
+	
+	divNew.appendChild(imgReroll);
 
 	var super_gif = new SuperGif({ gif: imgNew, show_progress_bar: false } );
 	
@@ -73,6 +144,8 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 		makeDraggable(divNew);
 	}
 	
+	dictDivGifs[iID] = divNew;
+	
 	return divNew;
 }
 
@@ -82,7 +155,7 @@ function makeDraggable(elmnt) {
 	// otherwise, move the DIV from anywhere inside the DIV:
 	elmnt.onmousedown = dragMouseDown;
 	
-	elmnt.setAttribute('style', 'position: absolute;');
+	elmnt.style.position = 'absolute';
 
 	function dragMouseDown(e) {
 	e = e || window.event;
