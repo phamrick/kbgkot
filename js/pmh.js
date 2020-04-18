@@ -108,6 +108,7 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	divNew.setAttribute('id', iID);
 	divNew.style.textAlign  = 'center';
 	divNew.style.margin  = 'auto';
+	divNew.style.position = 'absolute';
 	
 	//divNew.style.cssText = 'position:absolute;width:100%;height:100%;opacity:0.3;z-index:100;background:#000';
 	document.body.appendChild(divNew);
@@ -141,7 +142,8 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 
 	if(iDraggable === true)
 	{
-		makeDraggable(divNew);
+		//makeDraggable(divNew);
+		$('#'+iID).draggable();
 	}
 	
 	dictDivGifs[iID] = divNew;
@@ -187,6 +189,8 @@ function makeDraggable(elmnt) {
 		document.onmousemove = null;
 	}
 }
+
+
 
 function timeout(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
