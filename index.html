@@ -23,7 +23,7 @@
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<script src="https://unpkg.com/konva@4.2.2/konva.min.js"></script>
-	<script type="text/javascript" src="./libgif.js"></script>
+	<script src="./libgif.js"></script>
 	<script src="./pmh.js"></script>
     <script>
 		
@@ -43,7 +43,7 @@
 			Card41: 'Card41.png',Card42: 'Card42.png',Card43: 'Card43.png',Card44: 'Card44.png',Card45: 'Card45.png',Card46: 'Card46.png',Card47: 'Card47.png',Card48: 'Card48.png',Card49: 'Card49.png',Card50: 'Card50.png',
 			Card51: 'Card51.png',Card52: 'Card52.png',Card53: 'Card53.png',Card54: 'Card54.png',Card55: 'Card55.png',Card56: 'Card56.png',Card57: 'Card57.png',Card58: 'Card58.png',Card59: 'Card59.png',Card60: 'Card60.png',
 			Card61: 'Card61.png',Card62: 'Card62.png',Card63: 'Card63.png',Card64: 'Card64.png',
-			ButtonSendDecks: 'ButtonSendDecks.png', kot_dice_roll: 'kot_dice_roll.gif'
+			ButtonSendDecks: 'ButtonSendDecks.png'
 	  };
 	
 	  function fGetRandomImageKey() {
@@ -150,12 +150,18 @@
 			objectLayer.draw();
 			
 		}, false);
-				
+		
         //stage.add(background);
 		stage.add(objectLayer);
 		
+		CreateDieGif('die1');
+		CreateDieGif('die2');
+		CreateDieGif('die3');
+		CreateDieGif('die4');
+		CreateDieGif('die5');
+		CreateDieGif('die6');
 	  }
-	  
+
 	  var images = {};
       
       var loadedImages = 0;
@@ -174,13 +180,6 @@
 
 		images[src].src = sources[src];
       }
-	  
-	CreateDieGif('die1');
-	CreateDieGif('die2');
-	CreateDieGif('die3');
-	CreateDieGif('die4');
-	CreateDieGif('die5');
-	CreateDieGif('die6');
 	  
     </script>
   </body>
