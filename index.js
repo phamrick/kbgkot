@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
 app.use(express.static('images'))
+app.use(express.static('js'))
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
