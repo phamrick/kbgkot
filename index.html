@@ -3,7 +3,8 @@
   <head>
     <!-- <meta name="viewport" content="height=device-height, initial-scale=1"> -->
 	<!-- <meta name="viewport" content="initial-scale=1.0"> -->
-	<meta name="viewport" content="width=750">
+	<!-- <meta name="viewport" content="width=750"> -->
+	<meta name="viewport" content="width=device-width">
 	
     <title>KOT Socket.io</title>
     <style>
@@ -119,8 +120,8 @@
 
         var stage = new Konva.Stage({
           container: 'container',
-          width: 750,
-          height: 1334
+          width: 1334,
+          height: 750
         });
 		
         //var background = new Konva.Layer();
@@ -132,8 +133,8 @@
 		
 			var kimgSendDecks = new Konva.Image({
 			  image: imgSendDecks,
-				x: 300,
-				y: 1000,
+				x: 600,
+				y: 675,
 			  draggable: false,
 			});
 			
