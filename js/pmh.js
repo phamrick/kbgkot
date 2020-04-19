@@ -24,6 +24,35 @@ function rollDice(iDictDieIDtoResult)
 	}
 }
 
+function CreateDieGifs()
+{
+	var divDiceCont = document.createElement('div');
+	
+	var oChild = CreateDieGif('die1');
+	divDiceCont.appendChild(oChild);
+	
+	var oChild = CreateDieGif('die2');
+	divDiceCont.appendChild(oChild);
+	
+	var oChild = CreateDieGif('die3');
+	divDiceCont.appendChild(oChild);
+	
+	var oChild = CreateDieGif('die4');
+	divDiceCont.appendChild(oChild);
+	
+	var oChild = CreateDieGif('die5');
+	divDiceCont.appendChild(oChild);
+	
+	var oChild = CreateDieGif('die6');
+	divDiceCont.appendChild(oChild);
+	
+	var sStyle = 'position: absolute; left: 50%; -webkit-transform: translateX(-50%); transform: translateX(-50%);' + 
+									'top: 10%; -webkit-transform: translateY(-10%); transform: translateY(-10%)'	;
+
+	divDiceCont.setAttribute('style', sStyle);
+
+}
+
 function CreateDieGif(iID)
 {
 	var divGif = CreateSuperGifDiv(document.body, './die_anim_black.gif', iID, true);
@@ -86,6 +115,8 @@ function CreateDieGif(iID)
 			rollDice(dieIDresultPairs);
 		}
 	});
+	
+	return divGif;
 }
 
 function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
@@ -96,7 +127,7 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	divNew.style.margin  = 'auto';
 	divNew.style.position = 'absolute';
 	
-	document.body.appendChild(divNew);
+	iParent.appendChild(divNew);
 
     var imgNew = new Image();
 	imgNew.src = iSrc;
