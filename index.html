@@ -20,7 +20,7 @@
     </style>
   </head>
   <body>
-    <div id="container"></div>
+    <div id="container" style='outline-color:red; outline-style: solid; position: absolute' ></div>
 		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -126,8 +126,8 @@
 
         var stage = new Konva.Stage({
           container: 'container',
-          width: 1334,
-          height: 750
+          width: window.innerWidth,
+          height: window.innerHeight
         });
 		
         //var background = new Konva.Layer();
@@ -139,8 +139,8 @@
 		
 			var kimgSendDecks = new Konva.Image({
 			  image: imgSendDecks,
-				x: 600,
-				y: 675,
+				x: (window.innerWidth - imgSendDecks.width)/2,
+				y: (window.innerHeight - imgSendDecks.height - 10),
 			  draggable: false,
 			});
 			
@@ -163,12 +163,7 @@
         //stage.add(background);
 		stage.add(objectLayer);
 		
-		CreateDieGif('die1');
-		CreateDieGif('die2');
-		CreateDieGif('die3');
-		CreateDieGif('die4');
-		CreateDieGif('die5');
-		CreateDieGif('die6');
+		CreateDieGifs();
 	  }
 
 	  var images = {};

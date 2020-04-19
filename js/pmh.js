@@ -46,20 +46,24 @@ function CreateDieGifs()
 	var oChild = CreateDieGif('die6');
 	divDiceCont.appendChild(oChild);
 	
-	var sStyle = 'position: absolute; left: 50%; -webkit-transform: translateX(-50%); transform: translateX(-50%);' + 
-									'top: 10%; -webkit-transform: translateY(-10%); transform: translateY(-10%)'	;
+	var sStyle = 'position: absolute; outline-color:blue; outline-style: solid;'
+									+ 'left: 50%; -webkit-transform: translate(-50%, 10%); translate(-50%, 10%);';
+									//+ 'top: 10%; -webkit-transform: translateY(-10%); transform: translateY(-10%);'	;
 
 	divDiceCont.setAttribute('style', sStyle);
-
+	
+	//document.getElementById('container').appendChild(divDiceCont);
+	document.body.appendChild(divDiceCont);
 }
 
 function CreateDieGif(iID)
 {
 	var divGif = CreateSuperGifDiv(document.body, './die_anim_black.gif', iID, true);
 	
-	divGif.style.left = dieXpos.toString() + 'px';
-	divGif.style.top = "100px";
-	dieXpos = dieXpos + 180;
+	divGif.style.float = 'left';
+	// divGif.style.left = dieXpos.toString() + 'px';
+	// divGif.style.top = "100px";
+	// dieXpos = dieXpos + 180;
 
 	var imgDie = divGif.childNodes[0];
 	
@@ -125,7 +129,7 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	divNew.setAttribute('id', iID);
 	divNew.style.textAlign  = 'center';
 	divNew.style.margin  = 'auto';
-	divNew.style.position = 'absolute';
+	//divNew.style.position = 'absolute';
 	
 	iParent.appendChild(divNew);
 
