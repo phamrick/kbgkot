@@ -11,8 +11,17 @@ var dictDieGifResultFrames = {
 	three: 15,
 	two: 28,
 	bolt: 0,
-	claw: 29	
-	
+	claw: 29
+}
+
+function rollDice(iDictDieIDtoResult)
+{
+	var delay = 1000;
+	for(var key in iDictDieIDtoResult)
+	{			
+		rollDie(key, iDictDieIDtoResult[key], delay);
+		delay = delay + 250;
+	}
 }
 
 function CreateDieGif(iID)
@@ -22,18 +31,6 @@ function CreateDieGif(iID)
 	divGif.style.left = dieXpos.toString() + 'px';
 	divGif.style.top = "100px";
 	dieXpos = dieXpos + 180;
-
-	// divGif.addEventListener('click', function(e) {
-		
-		// //var oDiv = e.target;
-		// var oSuperGif = dictDieSupGifs[divGif.id];
-		// if (oSuperGif.get_playing())
-		// {
-			// oSuperGif.pause();
-		// } else {
-			// oSuperGif.play();
-		// }
-	// });
 
 	var imgDie = divGif.childNodes[0];
 	
@@ -52,15 +49,6 @@ function CreateDieGif(iID)
 	var imgReroll = divGif.childNodes[1];
 	
 	imgReroll.addEventListener('click', function(e) {
-		
-		//var delay = 1000;
-		//for(var key in dictDieSupGifs)
-		//{
-		//	rollDie(key, delay);
-		//	delay = delay + 250;
-		//}
-		
-		//var imgReroll = divGif.childNodes[1];
 		
 		var imgReroll = e.target;
 
@@ -85,21 +73,19 @@ function CreateDieGif(iID)
 			{
 				allOrSome = dictDieSupGifs;
 			}
-
-			var delay = 1000;
+			
+			var dieIDresultPairs = {};
+			
 			for(var key in rollTheseIDs)
 			{			
-				rollDie(key, delay);
-				delay = delay + 250;
+				dieIDresultPairs[key] = getRandomDieGifResultFrameIndex();
 			}
 			
+			socket.emit('rollDice', dieIDresultPairs);
+
+			rollDice(dieIDresultPairs);
 		}
 	});
-	
-	// imgReroll.addEventListener('dblclick', function(e) {
-		
-
-	// });
 }
 
 function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
@@ -110,26 +96,18 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	divNew.style.margin  = 'auto';
 	divNew.style.position = 'absolute';
 	
-	//divNew.style.cssText = 'position:absolute;width:100%;height:100%;opacity:0.3;z-index:100;background:#000';
 	document.body.appendChild(divNew);
 
     var imgNew = new Image();
 	imgNew.src = iSrc;
 	imgNew.setAttribute('rel:animated_src', iSrc);
 	imgNew.setAttribute('rel:auto_play', '0');
-	// imgNew.style.zIndex = 1;
-	// imgNew.style.margin = '0 auto';
-	// imgNew.style.position = 'absolute';
-	
+
 	divNew.appendChild(imgNew);
 	
     var imgReroll = new Image();
 	imgReroll.style.visibility = 'visible';
 	imgReroll.src = 'reroll_die_30.png';
-	// imgReroll.style.margin = '0 auto';
-	// imgReroll.style.position = 'absolute';
-	// imgReroll.style.zIndex = 2;
-	
 	dictImgRerolls[iID] = imgReroll;
 	
 	divNew.appendChild(imgReroll);
@@ -142,7 +120,6 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 
 	if(iDraggable === true)
 	{
-		//makeDraggable(divNew);
 		$('#'+iID).draggable();
 	}
 	
@@ -190,27 +167,25 @@ function makeDraggable(elmnt) {
 	}
 }
 
-
-
 function timeout(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function rollDie(iID, iDelay)
+function rollDie(iID, iStopAtFrame, iDelay)
 {
 	var oSuperGif = dictDieSupGifs[iID];
 	oSuperGif.move_to(Math.floor(Math.random() * oSuperGif.get_length()));
 	oSuperGif.play();
 	
-	stopDiceAt(getRandomDieGifResultFrameIndex(), iID, iDelay);
+	stopDiceAt(iID, iStopAtFrame, iDelay);
 }
 
-async function stopDiceAt(iStopAt, iID, iDelay) {
+async function stopDiceAt(iID, iStopAtFrame,iDelay) {
 	
 	await timeout(iDelay);
 	var oSuperGif = dictDieSupGifs[iID];
 	oSuperGif.pause();
-	oSuperGif.move_to(iStopAt);
+	oSuperGif.move_to(iStopAtFrame);
 }	
 
 function getRandomDieGifResultFrameIndex() {

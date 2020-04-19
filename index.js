@@ -24,6 +24,11 @@ io.on('connection', function(socket){
 								x: data.x,
 								y: data.y});
   });
+  
+  socket.on('rollDice', function(data){
+	
+    socket.broadcast.emit('rollDice',  data);
+  });
 });
 
 http.listen(port, function(){

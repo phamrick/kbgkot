@@ -21,15 +21,15 @@
   </head>
   <body>
     <div id="container"></div>
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-	<script src="./jquery.ui.touch-punch.min.js"></script>
-	<script src="https://unpkg.com/konva@4.2.2/konva.min.js"></script>
-	<script src="./libgif.js"></script>
-	<script src="./pmh.js"></script>
+		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<script src="./jquery.ui.touch-punch.min.js"></script>
+		<script src="https://unpkg.com/konva@4.2.2/konva.min.js"></script>
+		<script src="./libgif.js"></script>
+		<script src="./pmh.js"></script>
     <script>
-		
+	
 	  var objectLayer; 
 	  var socket = io();
 		
@@ -115,6 +115,12 @@
 		
 	    fUpdateKnodePos(nodeID, x, y);
       });
+	  
+	  socket.on('rollDice' , function(data) {
+	  
+		rollDice(data);
+	  
+	  });
 	  
       function initStage() {
 
