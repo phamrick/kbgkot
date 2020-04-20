@@ -29,6 +29,12 @@ io.on('connection', function(socket){
 	
     socket.broadcast.emit('rollDice',  data);
   });
+  
+  socket.on('toggleDieReroll', function(data){
+	
+    socket.broadcast.emit('toggleDieReroll',  data);
+  });
+
 });
 
 http.listen(port, function(){

@@ -1,6 +1,8 @@
 var dictDieSupGifs = {}; // create an empty array
 var dictDivGifs = {}; 
-var dictImgRerolls = {}; 
+var dictImgRerolls = {};
+
+var disableClickReroll = false;
 
 var dieXpos = window.innerWidth/2 - (180*6/2);
 
@@ -26,57 +28,77 @@ function rollDice(iDictDieIDtoResult)
 
 function CreateDieGifs()
 {
+	var dieDim = '160';
+	if(isMobile === false)
+		dieDim = '80';
+	
+	pathImage = './die_anim_black_' +  dieDim + '.gif';
+	
+	divContWidth = (parseInt(dieDim)*6).toString();
+	
 	var divDiceCont = document.createElement('div');
 	
-	var oChild = CreateDieGif('die1');
+	var oChild = CreateDieGif('die1', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var oChild = CreateDieGif('die2');
+	var oChild = CreateDieGif('die2', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var oChild = CreateDieGif('die3');
+	var oChild = CreateDieGif('die3', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var oChild = CreateDieGif('die4');
+	var oChild = CreateDieGif('die4', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var oChild = CreateDieGif('die5');
+	var oChild = CreateDieGif('die5', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var oChild = CreateDieGif('die6');
+	var oChild = CreateDieGif('die6', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var sStyle = 'position: absolute; outline-color:blue; outline-style: solid;'
-									+ 'left: 50%; -webkit-transform: translate(-50%, 10%); translate(-50%, 10%);';
-									//+ 'top: 10%; -webkit-transform: translateY(-10%); transform: translateY(-10%);'	;
+	var sStyle = 'position: absolute; left: 50%; -webkit-transform: translate(-50%, 10%); translate(-50%, 10%); width: ' + divContWidth + 'px';
 
 	divDiceCont.setAttribute('style', sStyle);
 	
-	//document.getElementById('container').appendChild(divDiceCont);
 	document.body.appendChild(divDiceCont);
 }
 
-function CreateDieGif(iID)
+function ToggleDieReroll(iID)
 {
-	var divGif = CreateSuperGifDiv(document.body, './die_anim_black.gif', iID, true);
+	var imgReroll = dictImgRerolls[iID];
+
+	var setVis = 'hidden';
+	
+	if (imgReroll.style.visibility === 'hidden')
+	{
+		setVis = 'visible';
+	} 
+	
+	imgReroll.style.visibility = setVis;
+}
+
+function CreateDieGif(iID, iImgPath)
+{
+	var divGif = CreateSuperGifDiv(document.body, iImgPath, iID, true);
 	
 	divGif.style.float = 'left';
-	// divGif.style.left = dieXpos.toString() + 'px';
-	// divGif.style.top = "100px";
-	// dieXpos = dieXpos + 180;
 
 	var imgDie = divGif.childNodes[0];
 	
 	imgDie.addEventListener('click', function(e) {
-		var imgDie = e.target;
-		var imgReroll = imgDie.parentNode.parentNode.childNodes[1];
-
-		if (imgReroll.style.visibility === 'hidden')
+		
+		if (disableClickReroll === true)
 		{
-			imgReroll.style.visibility = 'visible';
-		} else {
-			imgReroll.style.visibility = 'hidden';
+			disableClickReroll = false;
+			return;
 		}
+		
+		// var imgDie = e.target;
+		// var imgReroll = imgDie.parentNode.parentNode.childNodes[1];
+		
+		socket.emit('toggleDieReroll', iID);
+		
+		ToggleDieReroll(iID);
 	});
 	
 	var imgReroll = divGif.childNodes[1];
@@ -96,7 +118,6 @@ function CreateDieGif(iID)
 				var imgReroll = dictImgRerolls[key];
 				if(imgReroll.style.visibility === 'visible')
 				{
-					imgReroll.style.visibility = 'hidden';
 					rollTheseIDs[key] = key;
 				}
 			}
@@ -142,7 +163,12 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	
     var imgReroll = new Image();
 	imgReroll.style.visibility = 'visible';
-	imgReroll.src = 'reroll_die_30.png';
+	
+	var dieDim = '50';
+	if(isMobile === false)
+		dieDim = '30';
+	
+	imgReroll.src = 'reroll_die_' + dieDim + '.png';
 	dictImgRerolls[iID] = imgReroll;
 	
 	divNew.appendChild(imgReroll);
@@ -156,6 +182,9 @@ function CreateSuperGifDiv(iParent, iSrc, iID, iDraggable)
 	if(iDraggable === true)
 	{
 		$('#'+iID).draggable();
+		$('#'+iID).on('dragstart', function (event) {
+			disableClickReroll = true;
+		});
 	}
 	
 	dictDivGifs[iID] = divNew;
@@ -208,6 +237,12 @@ function timeout(ms) {
 
 function rollDie(iID, iStopAtFrame, iDelay)
 {
+	var imgReroll = dictImgRerolls[iID];
+	if(imgReroll.style.visibility === 'visible')
+	{
+		imgReroll.style.visibility = 'hidden';
+	}
+	
 	var oSuperGif = dictDieSupGifs[iID];
 	oSuperGif.move_to(Math.floor(Math.random() * oSuperGif.get_length()));
 	oSuperGif.play();

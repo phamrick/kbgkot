@@ -4,7 +4,8 @@
     <!-- <meta name="viewport" content="height=device-height, initial-scale=1"> -->
 	<!-- <meta name="viewport" content="initial-scale=1.0"> -->
 	<!-- <meta name="viewport" content="width=750"> -->
-	<meta name="viewport" content="width=device-width">
+	<!-- <meta name="viewport" content="width=device-width"> -->
+	<!-- <meta name="viewport" content="width=1900, initial-scale=1.0"> -->
 	
     <title>KOT Socket.io</title>
     <style>
@@ -20,15 +21,58 @@
     </style>
   </head>
   <body>
-    <div id="container" style='outline-color:red; outline-style: solid; position: absolute' ></div>
+    <div id="container" style="position: absolute"></div>
 		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 		<script src="./jquery.ui.touch-punch.min.js"></script>
 		<script src="https://unpkg.com/konva@4.2.2/konva.min.js"></script>
 		<script src="./libgif.js"></script>
-		<script src="./pmh.js"></script>
+		<script src="./kotdice.js"></script>
     <script>
+	
+		var isMobile = false;
+		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+			isMobile = true;
+		}
+
+		const binarySearch = dim => function bin(start, end) {
+			const guess = Math.floor((start + end)/2)
+
+			// this checks if we have the correct value, if not it will keep calling itself until there's a match
+			if(window.matchMedia(`(${dim}: ${guess}px)`).matches) {
+				return guess
+			}
+
+			// since it is not a match, then we need to recalibrate the range and call again.
+			// for that we check the boolean value using with min-width (height) rule.
+			return window.matchMedia(`(min-${dim}: ${guess}px)`).matches 
+				? bin(guess, end) 
+				: bin(start, guess)
+		}
+
+		const getCorrectDimension = (dim = 'width', range = 300) => {
+			if(dim !== 'width' && dim !== 'height') {
+				throw Error('`getCorrectDimension` accepts "width" or "height" as parameter')
+			}
+
+			let prop = 'inner' + dim.charAt(0).toUpperCase() + dim.slice(1)
+
+			// here checks if the window.innerWidth or Height it's the correct one
+			if(window.matchMedia(`(${dim}: ${window[prop]}px)`).matches) {
+				return window[prop]
+			}
+
+			// here, since the value is wrong we use binarySearch to find its correct value
+			const start = window[prop] - range >= 0 ? window[prop] - range : 0
+			const end = window[prop] + range
+
+			return binarySearch(dim)(start, end)
+
+		}
+		
+		var measuredScreenWidth = getCorrectDimension('width');
+		var measuredScreenHeight = getCorrectDimension('height');
 	
 	  var objectLayer; 
 	  var socket = io();
@@ -97,14 +141,11 @@
       }
 	  
       socket.on('instantiateCard', function(data){
-	  
-	  
+
 		var nodeID = data.nodeID;
 		var cardKey = data.cardKey;
 
-		
 		fInstantiateCard(cardKey, nodeID);
-        
       });
 	  
       socket.on('dragKnode', function(data){
@@ -117,17 +158,19 @@
       });
 	  
 	  socket.on('rollDice' , function(data) {
-	  
 		rollDice(data);
+	  });
 	  
+	  socket.on('toggleDieReroll' , function(data) {
+		ToggleDieReroll(data);
 	  });
 	  
       function initStage() {
 
         var stage = new Konva.Stage({
           container: 'container',
-          width: window.innerWidth,
-          height: window.innerHeight
+          width: measuredScreenWidth,
+          height: measuredScreenHeight
         });
 		
         //var background = new Konva.Layer();
