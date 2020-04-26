@@ -73,8 +73,11 @@
 		
 		<!-- var measuredScreenWidth = isMobile ? getCorrectDimension('width'): 1920; -->
 		<!-- var measuredScreenHeight = isMobile ? getCorrectDimension('height'): 1080; -->
-		var measuredScreenWidth = 1920; 
-		var measuredScreenHeight = 1080;
+		<!-- var measuredScreenWidth = 1920;  -->
+		<!-- var measuredScreenHeight = 1080; -->
+		
+		var measuredScreenWidth = window.innerWidth;
+		var measuredScreenHeight = window.innerHeight;
 	
 	  var objectLayer; 
 	  var socket = io();
@@ -428,8 +431,8 @@
 
         var stage = new Konva.Stage({
           container: 'container',
-          width: measuredScreenWidth,
-          height: measuredScreenHeight
+          width: 1920,
+          height: 1080
         });
 		
         var bgLayer = new Konva.Layer();
@@ -496,8 +499,8 @@
 			  image: imgSendDecks,
 				<!-- x: (window.innerWidth - imgSendDecks.width)/2, -->
 				<!-- y: (window.innerHeight - imgSendDecks.height - 10), -->
-				x: (measuredScreenWidth - imgSendDecks.width)/2,
-				y: (measuredScreenHeight - imgSendDecks.height - 10),
+				x: (1920 - imgSendDecks.width)/2,
+				y: (1080 - imgSendDecks.height - 10),
 			  draggable: false,
 			});
 			
@@ -519,6 +522,8 @@
 		
         stage.add(bgLayer);
 		stage.add(objectLayer);
+		
+		stage.scale({x: measuredScreenWidth/1920, y:measuredScreenWidth/1920});
 		
         drawBackground(
           bgLayer,
