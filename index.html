@@ -520,16 +520,30 @@
 			
 		}, false);
 		
+		var kimgBG= new Konva.Image({
+		  image: images.game_board
+		 });
+		 
+		 bgLayer.add(kimgBG);
+		 bgLayer.draw();
+		  
+
         stage.add(bgLayer);
 		stage.add(objectLayer);
 		
-		stage.scale({x: measuredScreenWidth/1920, y:measuredScreenWidth/1920});
+		stage.scale({x: measuredScreenWidth/1920, y:measuredScreenHeight/1080});
+		//bgLayer.scale({x: measuredScreenWidth/1920, y:measuredScreenWidth/1920});
+		//objectLayer.scale({x: measuredScreenWidth/1920, y:measuredScreenWidth/1920});
 		
-        drawBackground(
-          bgLayer,
-          images.game_board,
-          ''
-        );
+        <!-- drawBackground( -->
+          <!-- bgLayer, -->
+          <!-- images.game_board, -->
+          <!-- '' -->
+        <!-- ); -->
+		
+		stage.draw();
+		
+
 		
 		CreateDieGifs();
 	  }
