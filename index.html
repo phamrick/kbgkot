@@ -30,7 +30,7 @@
 		<script src="./libgif.js"></script>
 		<script src="./kotdice.js"></script>
     <script>
-	
+
 		var isMobile = false;
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			isMobile = true;
@@ -71,8 +71,10 @@
 
 		}
 		
-		var measuredScreenWidth = getCorrectDimension('width');
-		var measuredScreenHeight = getCorrectDimension('height');
+		<!-- var measuredScreenWidth = isMobile ? getCorrectDimension('width'): 1920; -->
+		<!-- var measuredScreenHeight = isMobile ? getCorrectDimension('height'): 1080; -->
+		var measuredScreenWidth = 1920; 
+		var measuredScreenHeight = 1080;
 	
 	  var objectLayer; 
 	  var socket = io();
@@ -82,21 +84,70 @@
 		return returnVal;
 	  }
 		
-      var sources = {
+      var sourcesCards = {
 			Card01: 'Card01.png',Card02: 'Card02.png',Card03: 'Card03.png',Card04: 'Card04.png',Card05: 'Card05.png',Card06: 'Card06.png',Card07: 'Card07.png',Card08: 'Card08.png',Card09: 'Card09.png',Card10: 'Card10.png',
 			Card11: 'Card11.png',Card12: 'Card12.png',Card13: 'Card13.png',Card14: 'Card14.png',Card15: 'Card15.png',Card16: 'Card16.png',Card17: 'Card17.png',Card18: 'Card18.png',Card19: 'Card19.png',Card20: 'Card20.png',
 			Card21: 'Card21.png',Card22: 'Card22.png',Card23: 'Card23.png',Card24: 'Card24.png',Card25: 'Card25.png',Card26: 'Card26.png',Card27: 'Card27.png',Card28: 'Card28.png',Card29: 'Card29.png',Card30: 'Card30.png',
 			Card31: 'Card31.png',Card32: 'Card32.png',Card33: 'Card33.png',Card34: 'Card34.png',Card35: 'Card35.png',Card36: 'Card36.png',Card37: 'Card37.png',Card38: 'Card38.png',Card39: 'Card39.png',Card40: 'Card40.png',
 			Card41: 'Card41.png',Card42: 'Card42.png',Card43: 'Card43.png',Card44: 'Card44.png',Card45: 'Card45.png',Card46: 'Card46.png',Card47: 'Card47.png',Card48: 'Card48.png',Card49: 'Card49.png',Card50: 'Card50.png',
 			Card51: 'Card51.png',Card52: 'Card52.png',Card53: 'Card53.png',Card54: 'Card54.png',Card55: 'Card55.png',Card56: 'Card56.png',Card57: 'Card57.png',Card58: 'Card58.png',Card59: 'Card59.png',Card60: 'Card60.png',
-			Card61: 'Card61.png',Card62: 'Card62.png',Card63: 'Card63.png',Card64: 'Card64.png',
-			ButtonSendDecks: 'ButtonSendDecks.png'
-	  };
+			Card61: 'Card61.png',Card62: 'Card62.png',Card63: 'Card63.png',Card64: 'Card64.png'
+		};
+		
+	  var sourcesCardDeck = Object.assign({}, sourcesCards);
 	
-	  function fGetRandomImageKey() {
+      var sourcesEtc = {
+			ButtonSendDecks: 'ButtonSendDecks.png',
+			game_board: 'kot_game_board.png',
+			ScoreCardTheKingNew: 'ScoreCardTheKingNew.png', ScoreCardAlienoidNew: 'ScoreCardAlienoidNew.png', ScoreCardCyberKitty: 'ScoreCardCyberKitty.png',
+			ScoreCardGigazaurNew: 'ScoreCardGigazaurNew.png', ScoreCardMekaDragonNew: 'ScoreCardMekaDragonNew.png', ScoreCardSpacePenguinNew: 'ScoreCardSpacePenguinNew.png',
+			FigureGigazaurNew: 'FigureGigazaurNew.png', FigureMecaDragonNew: 'FigureMecaDragonNew.png', FigureSpacePenguinNew: 'FigureSpacePenguinNew.png',
+			FigureTheKingNew: 'FigureTheKingNew.png', FigureAlienoidNew: 'FigureAlienoidNew.png', FigureCyberKitty: 'FigureCyberKitty.png'
+	  };
+	  
+	  var score_texts = {};
+	
+		// image positions
+		var characterCards = {
+		ScoreCardTheKingNew: { x: 0, y: 0 },
+		ScoreCardCyberKitty: { x: 0, y: 0 },
+		ScoreCardGigazaurNew: { x: 0, y: 0 },
+		ScoreCardMekaDragonNew: { x: 0, y: 0 },
+		ScoreCardSpacePenguinNew: { x: 0, y: 0 },
+		ScoreCardAlienoidNew: { x: 0, y: 0 }
+		};
 
-        var keys = Object.keys(sources);
+		var figures = {
+		FigureGigazaurNew: { x: 400, y: 70 },
+		FigureMecaDragonNew: { x: 400, y: 70 },
+		FigureSpacePenguinNew: { x: 400, y: 70 },
+		FigureTheKingNew: { x: 400, y: 70 },
+		FigureAlienoidNew: { x: 400, y: 70 },
+		FigureCyberKitty: { x: 400, y: 70 }
+		};
+		
+		var func_dragStart = function(e) {
+		
+			var draggedObj = e.target;
+			draggedObj.moveToTop();
+			draggedObj.getLayer().draw();
+		};
+		
+		var func_nodeTopMostAndSelected = function(e) {
+								
+			var oNode = e.target;
+			oNode.moveToTop();
+			oNode.getLayer().draw();
+			selectedNode = oNode;
+		};
+	
+	  function fGetRandomCardImgKey() {
+
+        var keys = Object.keys(sourcesCardDeck);
         var randomKey = keys[Math.floor(Math.random() * keys.length)];
+
+		delete sourcesCardDeck[randomKey];
+
 		return randomKey;
       }
 	  
@@ -110,6 +161,61 @@
 		oNode.y(iY);
 		objectLayer.draw();
 	  }
+	  
+	  function settextval(iNodeID, iTextVal) {
+		
+		var oNode = score_texts[iNodeID];
+		oNode.setAttr('text',iTextVal);
+		oNode.getLayer().draw();
+	  }
+	  
+		var func_applyTokenLoadToCard = function(iKimg) {
+		
+			var oImg = iKimg.image();
+			var src = oImg.src;
+
+			var tokenSrc = '';
+			if (src.endsWith('Card24.png')) {
+				tokenSrc = 'token_shrink_ray_100.png';
+			} else if (src.endsWith('Card55.png')) {
+				tokenSrc = 'token_mimic_100.png';
+			} else if (src.endsWith('Card63.png')) {
+				tokenSrc = 'token_poison_spit_100.png';
+			} else if (src.endsWith('Card23.png')) {
+				tokenSrc = 'token_smoke_cloud_100.png';
+			}else if (src.endsWith('Card41.png')) {
+				tokenSrc = 'energy_cube.png';
+			}
+
+			if(tokenSrc.length > 0)
+			{
+				//alert('applying dblclick');
+			
+				iKimg.on('dblclick', function(e) {
+					var oTarget = e.target;
+					var tokenImg = new Image();
+					tokenImg.src = tokenSrc;
+				
+					tokenImg.addEventListener("load", function() {
+						var tokenKimg = new Konva.Image({
+						  image: tokenImg,
+						  x: 600,
+						  y: 950,
+						  draggable: true
+						});
+						
+						var parentLayer = oTarget.getLayer();
+						parentLayer.add(tokenKimg);
+						tokenKimg.draw();
+						parentLayer.draw();
+						
+						tokenKimg.on('click', func_nodeTopMostAndSelected);
+						tokenKimg.on('dragstart', func_dragStart);
+
+					}, false);
+				});
+			}
+		};
 
       function fInstantiateCard(iImageKey, iNodeID) {
 				
@@ -134,10 +240,21 @@
 		  );
 		});
 			
+		func_applyTokenLoadToCard(cardKimg);
+			
         objectLayer.add(cardKimg);
         objectLayer.draw();
 		
 		return cardKimg.id();
+      }
+	  
+      function drawBackground(background, bgImg, text) {
+        var context = background.getContext();
+        context.drawImage(bgImg, 0, 0);
+        context.setAttr('font', '20pt Calibri');
+        context.setAttr('textAlign', 'center');
+        context.setAttr('fillStyle', 'white');
+        context.fillText(text, background.getStage().width() / 2, 40);
       }
 	  
       socket.on('instantiateCard', function(data){
@@ -157,6 +274,11 @@
 	    fUpdateKnodePos(nodeID, x, y);
       });
 	  
+      socket.on('settextval', function(data){
+	 
+		settextval(data.nodeID, data.textval);
+      });
+	  
 	  socket.on('rollDice' , function(data) {
 		rollDice(data);
 	  });
@@ -164,6 +286,143 @@
 	  socket.on('toggleDieReroll' , function(data) {
 		ToggleDieReroll(data);
 	  });
+	  
+		var func_IncrementTextNum = function(e){
+			var textObj = e.target;
+			//alert('you clicked on "' + textObj.text() + '"');
+
+			var incr = 1;
+			if (e.evt.button === 2 || e.evt.ctrlKey) {
+				incr = -1;
+			}
+			
+			var origVal = parseInt(textObj.text());
+			
+			var x_bump = 10;
+			if (origVal === 9 && incr === 1){
+				//textObj.x = textObj.x - x_bump;
+				var position = textObj.absolutePosition();
+
+				// set position
+				textObj.absolutePosition({
+				  x: position.x - x_bump,
+				  y: position.y
+				});
+								
+			} else if (origVal === 10 && incr === -1) {
+				//textObj.x = textObj.x + x_bump;
+				var position = textObj.absolutePosition();
+
+				// set position
+				textObj.absolutePosition({
+				  x: position.x + x_bump,
+				  y: position.y
+				});
+			}
+
+			var new_val = (origVal + incr).toString();
+			
+			textObj.setAttr('text',new_val);
+
+			textObj.getLayer().draw();
+			
+			socket.emit('settextval', {nodeID: textObj.id(), textval: new_val});
+		};
+	  
+		var func_AddCounteTextsToCharacterGroup = function(iAnimal, iLayer) {
+		
+			//var xAnim = iAnimal.x;
+			//var yAnim = iAnimal.y;
+			//
+			//iAnimal.absolutePosition({
+			//  x: 0,
+			//  y: 0
+			//});
+		
+			var group = new Konva.Group({
+				x: 50,
+				y: 50,
+				draggable: true,
+				id: 'pb' + iAnimal.id()
+			  });
+			  
+			group.on('dragstart', func_dragStart);
+			
+			group.on('dragmove', function(e) {
+			  var oNode = e.target;
+			  socket.emit('dragKnode', { nodeID: oNode.id(),
+												x: oNode.x(),
+												y: oNode.y()}
+			  );
+			});
+			  
+			var textPoints = new Konva.Text({
+				text: '0',
+				x: 70,
+				y: 15,
+				fontSize: 30,
+				fontStyle: 'bold',
+				id: iAnimal.id() + 'points'
+			});
+			
+			score_texts[textPoints.id()] = textPoints;
+
+			textPoints.on('contextmenu', (e) => {
+			  e.evt.preventDefault();
+			});
+
+			textPoints.on('click', func_IncrementTextNum);
+			
+			var textHearts = new Konva.Text({
+				text: '10',
+				x: 215,
+				y: 195,
+				fontSize: 30,
+				fontStyle: 'bold',
+				fill: 'white',
+				id: iAnimal.id() + 'hearts'
+			});
+			
+			score_texts[textHearts.id()] = textHearts;
+
+			textHearts.on('contextmenu', (e) => {
+			  e.evt.preventDefault();
+			});
+
+			textHearts.on('click', func_IncrementTextNum);
+			
+			var textEnergy = new Konva.Text({
+				text: '0',
+				x: 70,
+				y: 195,
+				fontSize: 30,
+				fontStyle: 'bold',
+				id: iAnimal.id() + 'energy'
+			});
+			
+			score_texts[textEnergy.id()] = textEnergy;
+
+			textEnergy.on('contextmenu', (e) => {
+			  e.evt.preventDefault();
+			});
+
+			textEnergy.on('click', func_IncrementTextNum);
+			
+			group.add(iAnimal);
+			group.add(textPoints);
+			group.add(textHearts);
+			group.add(textEnergy);
+			
+
+            iLayer.add(group);
+			
+			group.on('click', function(e) {
+				var oGroup = e.target.getParent();
+				oGroup.moveToTop();
+				oGroup.getLayer().draw();
+				selectedNode = oGroup;
+			});
+		}
 	  
       function initStage() {
 
@@ -173,8 +432,61 @@
           height: measuredScreenHeight
         });
 		
-        //var background = new Konva.Layer();
+        var bgLayer = new Konva.Layer();
         objectLayer = new Konva.Layer();
+		
+        // create draggable characterCards
+        for (var key in characterCards) {
+          // anonymous function to induce scope
+          (function() {
+            var privKey = key;
+
+            var anim = characterCards[key];
+
+            var animal = new Konva.Image({
+              image: images[privKey],
+              x: anim.x,
+              y: anim.y,
+			  id: privKey
+            });
+
+            func_AddCounteTextsToCharacterGroup(animal, objectLayer);
+
+          })();
+        }
+		
+        // create draggable figures
+        for (var key in figures) {
+          // anonymous function to induce scope
+          (function() {
+            var privKey = key;
+		
+            var fig = figures[key];
+		
+            var figure = new Konva.Image({
+              image: images[privKey],
+              x: fig.x,
+              y: fig.y,
+			  draggable: true,
+			  id: privKey
+            });
+			
+			figure.on('dragstart', func_dragStart);
+			figure.on('click', func_nodeTopMostAndSelected);
+			figure.on('dragmove', function(e) {
+			  var oNode = e.target;
+			  socket.emit('dragKnode', { nodeID: oNode.id(),
+												x: oNode.x(),
+												y: oNode.y()}
+			  );
+			});
+			
+            objectLayer.add(figure);
+			
+          })();
+        }
+		
+		
 		
 		var imgSendDecks = new Image();
 		imgSendDecks.src = 'ButtonSendDecks.png';
@@ -182,15 +494,17 @@
 		
 			var kimgSendDecks = new Konva.Image({
 			  image: imgSendDecks,
-				x: (window.innerWidth - imgSendDecks.width)/2,
-				y: (window.innerHeight - imgSendDecks.height - 10),
+				<!-- x: (window.innerWidth - imgSendDecks.width)/2, -->
+				<!-- y: (window.innerHeight - imgSendDecks.height - 10), -->
+				x: (measuredScreenWidth - imgSendDecks.width)/2,
+				y: (measuredScreenHeight - imgSendDecks.height - 10),
 			  draggable: false,
 			});
 			
 			objectLayer.add(kimgSendDecks);
 			
 			var fEvent = function() {
-		      var key = fGetRandomImageKey();
+		      var key = fGetRandomCardImgKey();
 			  var nodeIDnew = fInstantiateCard(key, '');
 			  socket.emit('instantiateCard', { nodeID: nodeIDnew,
 												cardKey: key,  }
@@ -203,8 +517,14 @@
 			
 		}, false);
 		
-        //stage.add(background);
+        stage.add(bgLayer);
 		stage.add(objectLayer);
+		
+        drawBackground(
+          bgLayer,
+          images.game_board,
+          ''
+        );
 		
 		CreateDieGifs();
 	  }
@@ -213,20 +533,28 @@
       
       var loadedImages = 0;
       var numImages = 0;
-      for (var src in sources) {
+      for (var src in sourcesCards) {
         numImages++;
       }
-
-      for (var src in sources) {
-        images[src] = new Image();
-        images[src].onload = function() {
-          if (++loadedImages >= numImages) {
-            initStage(images);
-          }
-        };
-
-		images[src].src = sources[src];
+      for (var src in sourcesEtc) {
+        numImages++;
       }
+	  
+	  var sourcesAll = Object.assign({}, sourcesCards, sourcesEtc);
+	  
+
+	  for (var src in sourcesAll) {
+		images[src] = new Image();
+		images[src].onload = function() {
+		  if (++loadedImages >= numImages) {
+			initStage(images);
+		  }
+		};
+
+		images[src].src = sourcesAll[src];
+	  }
+
+
 	  
     </script>
   </body>

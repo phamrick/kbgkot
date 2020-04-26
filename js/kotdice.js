@@ -56,8 +56,12 @@ function CreateDieGifs()
 	var oChild = CreateDieGif('die6', pathImage);
 	divDiceCont.appendChild(oChild);
 	
-	var sStyle = 'position: absolute; left: 50%; -webkit-transform: translate(-50%, 10%); translate(-50%, 10%); width: ' + divContWidth + 'px';
-
+	var sStyle = 'position: absolute; left: 50%; -webkit-transform: translate(-50%, 10%); translate(-50%, 10%); width: ' + divContWidth + 'px;';
+	// //var sStyle = 'position: absolute; left: 0;right: 0; text-align: center';
+	
+	//divDiceCont.style.position = 'absolute';
+	//divDiceCont.style.left = (window.innerWidth/2 - 300).toString() + 'px';
+	
 	divDiceCont.setAttribute('style', sStyle);
 	
 	document.body.appendChild(divDiceCont);

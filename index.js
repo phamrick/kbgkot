@@ -34,6 +34,11 @@ io.on('connection', function(socket){
 	
     socket.broadcast.emit('toggleDieReroll',  data);
   });
+  
+  socket.on('settextval', function(data){
+ 
+	socket.broadcast.emit('settextval',  data);
+  });
 
 });
 
