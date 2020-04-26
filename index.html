@@ -262,6 +262,9 @@
         context.setAttr('fillStyle', 'white');
         context.fillText(text, background.getStage().width() / 2, 40);
       }
+
+	if (isMobile === false)
+	{
 	  
       socket.on('instantiateCard', function(data){
 
@@ -284,6 +287,8 @@
 	 
 		settextval(data.nodeID, data.textval);
       });
+	  
+	  }
 	  
 	  socket.on('rollDice' , function(data) {
 		rollDice(data);
@@ -431,6 +436,8 @@
 		}
 	  
       function initStage() {
+	  
+		if (isMobile === false) {
 
         var stage = new Konva.Stage({
           container: 'container',
@@ -534,7 +541,7 @@
         stage.add(bgLayer);
 		stage.add(objectLayer);
 		
-		stage.scale({x: measuredScreenWidth/1920, y:measuredScreenHeight/1080});
+		//stage.scale({x: measuredScreenWidth/1920, y:measuredScreenHeight/1080});
 		//bgLayer.scale({x: measuredScreenWidth/1920, y:measuredScreenWidth/1920});
 		//objectLayer.scale({x: measuredScreenWidth/1920, y:measuredScreenWidth/1920});
 		
@@ -546,7 +553,7 @@
 		
 		stage.draw();
 		
-
+		}
 		
 		CreateDieGifs();
 	  }
