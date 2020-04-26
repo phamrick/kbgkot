@@ -76,8 +76,11 @@
 		<!-- var measuredScreenWidth = 1920;  -->
 		<!-- var measuredScreenHeight = 1080; -->
 		
-		var measuredScreenWidth = window.innerWidth;
-		var measuredScreenHeight = window.innerHeight;
+		<!-- var measuredScreenWidth = window.innerWidth; -->
+		<!-- var measuredScreenHeight = window.innerHeight; -->
+		
+		var measuredScreenWidth = isMobile ? getCorrectDimension('width'): window.innerWidth;
+		var measuredScreenHeight = isMobile ? getCorrectDimension('height'): window.innerHeight;
 	
 	  var objectLayer; 
 	  var socket = io();
